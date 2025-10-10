@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import studentRouter from "./routes/studentsRouter.js";
+
 import userRouter from "./routes/userRouter.js";
 import productRouter from "./routes/productRouter.js";
 import jwt from "jsonwebtoken";
@@ -30,14 +30,19 @@ app.use((req, res, next) => {
 });
 // --- Jwt Token Middleware --- //
 
-
 mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("Database is connected"))
-  .catch(() => console.log("Database connection failed"));
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Database connected successfully"))
+  .catch((error) => {
+    console.error("Database connection failed:", error.message);
+  });
 
 
-app.use("/api/students", studentRouter);
+
+
 app.use("/api/users", userRouter);
 app.use("/api/products", productRouter);
 

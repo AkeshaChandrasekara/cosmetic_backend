@@ -2,36 +2,31 @@ import Product from "../models/product.js"
 import { isAdmin } from "./userController.js";
 
 export async function createProduct(req, res){
-
-    if(isAdmin(req) ){
-        res.status(403).json({
+    if(!isAdmin(req)){ 
+        return res.status(403).json({
             message: "You are not authorized to create a product"
-        })
-        return
+        });
     }
 
     try {
-         const productData = req.body;
+        const productData = req.body;
+        const product = new Product(productData);
+        await product.save();
 
-    const product = new Product(productData);
-    await product.save();
-
-    res.json({
-        message: "Product created successfully",
-        product: product
-    })  
+        res.json({
+            message: "Product created successfully",
+            product: product
+        });  
 
     } catch (error) {
         console.log(error);
         res.status(500).json({
             message: "Failed to create product",
             error: error.message
-        })
+        });
     }
-
-   
-
 }
+
 
 export async function getProducts(req, res){
     try{

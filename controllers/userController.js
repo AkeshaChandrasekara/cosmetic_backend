@@ -84,13 +84,25 @@ export async function loginUser(req, res) {
 
 export async function getUsers(req, res) {
   try {
-    const users = await User.find().select("-password"); 
+    const { email } = req.query; 
+
+    let users;
+    if (email) {
+      
+      users = await User.find({ email }).select("-password");
+    } else {
+    
+      users = await User.find().select("-password");
+    }
+
     res.json(users);
   } catch (err) {
     console.error("Failed to fetch users:", err);
     res.status(500).json({ error: "Failed to fetch users" });
   }
 }
+
+
 
 
 export const deleteUser = async (req, res) => {
@@ -115,11 +127,10 @@ export const deleteUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstName, lastName, email } = req.body;
-
+    const { firstName, lastName, email, image } = req.body; 
     const updatedUser = await User.findByIdAndUpdate(
       id,
-      { firstName, lastName, email },
+      { firstName, lastName, email, image }, 
       { new: true }
     ).select("-password");
 
@@ -133,6 +144,7 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ message: "Failed to update user", error: err.message });
   }
 };
+
 
 
 
