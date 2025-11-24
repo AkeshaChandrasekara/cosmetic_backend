@@ -1,46 +1,58 @@
 import express from "express";
 import mongoose from "mongoose";
+import bodyParser from 'body-parser';
 
 import userRouter from "./routes/userRouter.js";
 import productRouter from "./routes/productRouter.js";
 import jwt from "jsonwebtoken";
 import cors from "cors";
 import dotenv from "dotenv";
-dotenv.config();
+
+dotenv.config()
+
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-// --- Jwt Token Middleware --- //
-app.use((req, res, next) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
+const mongoUrl = process.env.MONGO_DB_URI
 
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded; 
-    } catch (err) {
-      console.warn("Invalid token:", err.message);
-     
+app.use(cors())
+
+mongoose.connect(mongoUrl,{})
+
+const connection = mongoose.connection;
+
+connection.once("open",()=>{
+  console.log("Database connected");
+})
+
+
+app.use(bodyParser.json())
+
+app.use(
+
+  (req,res,next)=>{
+
+
+
+    const token = req.header("Authorization")?.replace("Bearer ","")
+    console.log(token)
+
+    if(token != null){
+      jwt.verify(token,process.env.SECRET , (error,decoded)=>{
+
+        if(!error){
+          req.user = decoded   
+          console.log(decoded)     
+        }
+
+      })
     }
+
+    next()
+
   }
 
-  next();
-});
-// --- Jwt Token Middleware --- //
-
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Database connected successfully"))
-  .catch((error) => {
-    console.error("Database connection failed:", error.message);
-  });
-
-
+)
 
 
 app.use("/api/users", userRouter);
