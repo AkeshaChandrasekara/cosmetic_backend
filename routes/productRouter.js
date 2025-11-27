@@ -10,7 +10,8 @@ productRouter.get("/search", (req, res) => {
 });
 productRouter.delete("/:productID", deleteProduct);
 productRouter.put("/:productID", updateProduct);
-productRouter.get("/:productID", getProductId);
+//productRouter.get("/:productID", getProductId);
+productRouter.get("/:id", getProductId);
 
 
 

@@ -94,24 +94,24 @@ export async function updateProduct(req, res) {
 }
 
 
-export async function getProductId(req,res) {
-    try{
-        const productID = req.params.productID;
-        const product = await Product.findById({
-            productID: productID
-        });
-        if(product == null){
-            res.status(404).json({
+// In your productController.js - Update the getProductId function
+export async function getProductId(req, res) {
+    try {
+        const productID = req.params.id; // Changed from productID to id
+        const product = await Product.findOne({ productID: productID }); // Fixed findById to findOne
+        
+        if (!product) {
+            return res.status(404).json({
                 message: "Product not found"
-            })
-            return
+            });
         }
+        
         res.json(product);
-    }catch(err){
+    } catch (err) {
         console.log(err);
         res.status(500).json({
             message: "Failed to fetch product",
             error: err.message
-        })
+        });
     }
 }
