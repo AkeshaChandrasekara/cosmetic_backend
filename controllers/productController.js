@@ -94,11 +94,11 @@ export async function updateProduct(req, res) {
 }
 
 
-// In your productController.js - Update the getProductId function
+
 export async function getProductId(req, res) {
     try {
-        const productID = req.params.id; // Changed from productID to id
-        const product = await Product.findOne({ productID: productID }); // Fixed findById to findOne
+        const productID = req.params.id; 
+        const product = await Product.findOne({ productID: productID }); 
         
         if (!product) {
             return res.status(404).json({
